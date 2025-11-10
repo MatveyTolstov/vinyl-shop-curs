@@ -107,6 +107,8 @@ class OrderSerializer(serializers.ModelSerializer):
     order_items = OrderItemSerializer(many=True, read_only=True, source="orderitem_set")
     total = serializers.SerializerMethodField()
     user_name = serializers.CharField(source="user.username", read_only=True)
+    shipping_address = ShippingAddressSerializer(read_only=True, allow_null=True)
+    coupon = CouponSerializer(read_only=True, allow_null=True)
 
     class Meta:
         model = Order
@@ -123,16 +125,11 @@ class OrderSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["date_order"]
 
-
-class OrderSerializer(serializers.ModelSerializer):
-    total = serializers.SerializerMethodField()
-
     def get_total(self, obj):
         """Вычисляет общую сумму заказа"""
         total = Decimal("0")
         for item in obj.orderitem_set.all():
             total += item.price_at_order * Decimal(str(item.quantity))
-
 
         if hasattr(obj, "coupon") and obj.coupon and obj.coupon.active:
             discount_decimal = Decimal(str(obj.coupon.discount_percent)) / Decimal(

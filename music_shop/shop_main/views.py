@@ -27,6 +27,7 @@ from reportlab.lib.units import mm
 from django.db.models import Sum
 
 from django.shortcuts import render, HttpResponse, redirect
+from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User, Group
 from .forms import (
@@ -61,6 +62,7 @@ from .models import (
     Review,
     ShippingAddress,
     Coupon,
+    LogEntry,
 )
 
 
@@ -128,6 +130,30 @@ class ProductDetailView(TemplateView):
     template_name = "product_detail.html"
 
     def get(self, request, *args, **kwargs):
+        # Логируем просмотр товара
+        from .logger_utils import create_log_entry
+        product_id = kwargs.get('pk')
+        if product_id:
+            try:
+                product = Product.objects.get(pk=product_id)
+                x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+                if x_forwarded_for:
+                    ip_address = x_forwarded_for.split(',')[0]
+                else:
+                    ip_address = request.META.get('REMOTE_ADDR')
+                user_agent = request.META.get('HTTP_USER_AGENT', '')[:255]
+                
+                create_log_entry(
+                    action='product_viewed',
+                    user=request.user if request.user.is_authenticated else None,
+                    description=f"Просмотр товара '{product.product_name}'",
+                    ip_address=ip_address,
+                    user_agent=user_agent,
+                    product=product,
+                )
+            except Product.DoesNotExist:
+                pass
+        
         return super().get(request, *args, **kwargs)
 
 
@@ -455,6 +481,39 @@ class OrderUpdateView(PermissionRequiredMixin, UpdateView):
             or user.is_superuser
             or user.groups.filter(name="Manager").exists()
         )
+    
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        # Сохраняем старый статус для логирования
+        obj._old_status = obj.status
+        return obj
+    
+    def form_valid(self, form):
+        order = form.instance
+        old_status = getattr(order, '_old_status', None)
+        
+        response = super().form_valid(form)
+        
+        # Логируем изменение статуса
+        if old_status and old_status != order.status:
+            from .logger_utils import create_log_entry
+            x_forwarded_for = self.request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                ip_address = x_forwarded_for.split(',')[0]
+            else:
+                ip_address = self.request.META.get('REMOTE_ADDR')
+            user_agent = self.request.META.get('HTTP_USER_AGENT', '')[:255]
+            
+            create_log_entry(
+                action='order_updated',
+                user=self.request.user,
+                description=f"Статус заказа #{order.id} изменен с '{old_status}' на '{order.status}'",
+                ip_address=ip_address,
+                user_agent=user_agent,
+                order=order,
+            )
+        
+        return response
 
 
 class OrderDeleteView(PermissionRequiredMixin, DeleteView):
@@ -969,3 +1028,50 @@ class GeneratePDFReportView(PermissionRequiredMixin, View):
                     },
                 }
             )
+
+
+class LogEntryListView(PermissionRequiredMixin, ListView):
+    """View для отображения списка логов"""
+    
+    def has_permission(self):
+        user = self.request.user
+        return user.is_authenticated and (
+            user.is_staff
+            or user.is_superuser
+            or user.groups.filter(name="Manager").exists()
+        )
+    
+    model = LogEntry
+    template_name = "log/list.html"
+    context_object_name = "logs"
+    paginate_by = 50
+    
+    def get_queryset(self):
+        queryset = LogEntry.objects.select_related(
+            "user", "order", "product"
+        ).all()
+        
+        # Фильтрация по действию
+        action_filter = self.request.GET.get("action")
+        if action_filter:
+            queryset = queryset.filter(action=action_filter)
+        
+        # Фильтрация по пользователю
+        user_filter = self.request.GET.get("user")
+        if user_filter:
+            queryset = queryset.filter(user_id=user_filter)
+        
+        # Поиск по описанию
+        search = self.request.GET.get("search")
+        if search:
+            queryset = queryset.filter(description__icontains=search)
+        
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["action_choices"] = LogEntry.ACTION_CHOICES
+        context["users"] = User.objects.filter(
+            log_entries__isnull=False
+        ).distinct()
+        return context
