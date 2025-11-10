@@ -1,0 +1,27 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'product_detail.css' %}" />
+<div
+	class="product-page"
+	style="
+		max-width: 1100px;
+		margin: 100px auto 40px;
+		padding: 0 16px;
+		display: block;
+	"
+>
+	<h1 class="product-title">Корзина</h1>
+	{% csrf_token %}
+	<div class="card">
+		<div id="cart-content">
+			<div class="text-center">
+				<div class="spinner-border" role="status">
+					<span class="visually-hidden">Загрузка...</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="{% static 'js/api.js' %}"></script>
+<script src="{% static 'js/cart.js' %}"></script>
+{% endblock content %}

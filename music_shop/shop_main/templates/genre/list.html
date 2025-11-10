@@ -1,0 +1,57 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'tables.css' %}" />
+<div
+	class="product-page"
+	style="max-width: 1200px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+		<h1 class="product-title" style="margin: 0;">Жанры</h1>
+		<a class="add-to-cart-btn" href="{% url 'genre-create' %}"
+			>Добавить жанр</a
+		>
+	</div>
+	<div class="card" style="padding: 20px; border-radius: 12px;">
+		{% if records %}
+		<table class="table">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Название</th>
+					<th>Описание</th>
+					<th style="text-align: right;">Действия</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for g in records %}
+				<tr>
+					<td>#{{ g.id }}</td>
+					<td><strong>{{ g.get_genre_name_display }}</strong></td>
+					<td>{{ g.description|truncatewords:20 }}</td>
+					<td style="text-align: right;">
+						<a class="add-to-cart-btn btn-secondary" href="{% url 'genre-detail' g.pk %}"
+							style="font-size: 12px; padding: 6px 10px;"
+							>Открыть</a
+						>
+						<a class="add-to-cart-btn btn-outline" href="{% url 'genre-update' g.pk %}"
+							style="font-size: 12px; padding: 6px 10px;"
+							>Править</a
+						>
+						<a class="add-to-cart-btn btn-danger" href="{% url 'genre-delete' g.pk %}"
+							style="font-size: 12px; padding: 6px 10px;"
+							>Удалить</a
+						>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% else %}
+		<p class="muted" style="text-align: center; padding: 40px 0;">Пока нет жанров.</p>
+		{% endif %}
+	</div>
+	<div style="margin-top: 16px;">
+		<a class="add-to-cart-btn btn-outline" href="{% url 'db-index' %}">Назад к базе данных</a>
+	</div>
+</div>
+{% endblock %}
+

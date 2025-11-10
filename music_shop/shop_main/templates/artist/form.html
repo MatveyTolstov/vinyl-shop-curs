@@ -1,0 +1,39 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'tables.css' %}" />
+<div
+	class="product-page"
+	style="max-width: 700px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<h1 class="product-title">
+		{% if object %} 
+			✏️ Редактировать исполнителя 
+		{% else %}
+			➕ Создать исполнителя
+		{% endif %}
+	</h1>
+	<div class="card" style="padding: 20px; border-radius: 12px;">
+		<form method="post">
+			{% csrf_token %}
+			{{ form.non_field_errors }} 
+			<div class="field">
+				<label>{{ form.artist_name.label }}</label>
+				{{ form.artist_name }}
+				{% if form.artist_name.errors %}
+					<div style="color: #dc2626; font-size: 14px; margin-top: 4px;">{{ form.artist_name.errors|first }}</div>
+				{% endif %}
+			</div>
+			<div class="field">
+				<label>{{ form.country.label }}</label>
+				{{ form.country }}
+				{% if form.country.errors %}
+					<div style="color: #dc2626; font-size: 14px; margin-top: 4px;">{{ form.country.errors|first }}</div>
+				{% endif %}
+			</div>
+			<div style="margin-top: 20px; display: flex; gap: 12px;">
+				<button class="add-to-cart-btn" type="submit">✅ Сохранить</button>
+				<a class="add-to-cart-btn btn-outline" href="{% url 'artist-list' %}">❌ Отмена</a>
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}

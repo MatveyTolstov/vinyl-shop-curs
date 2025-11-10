@@ -1,0 +1,22 @@
+<div class="logo">
+    <h2>Vinyl Shop</h2>
+</div>
+
+<nav class="navbar">
+    <ul class="nav-list">
+        <li><a href="{% url 'main' %}">Главная</a></li>
+        <li><a href="{% url 'catalog' %}">Каталог</a></li>
+        <li><a href="{% url 'account' %}">Кабинет</a></li>
+        <li><a href="{% url 'cart' %}">Корзина</a></li>
+        
+        {% if user.is_staff or user.is_superuser %}
+            <li><a href="{% url 'db-index' %}">Управление базой данных</a></li>
+        {% elif user.groups.all %}
+            {% for group in user.groups.all %}
+                {% if group.name == 'Manager' %}
+                    <li><a href="{% url 'db-index' %}">Управление товарами</a></li>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </ul>
+</nav>

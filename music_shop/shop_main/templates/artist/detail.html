@@ -1,0 +1,26 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'tables.css' %}" />
+<div
+	class="product-page"
+	style="max-width: 800px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<h1 class="product-title">👤 Исполнитель: {{ object.artist_name }}</h1>
+	<div class="card" style="padding: 20px; border-radius: 12px;">
+		<div style="margin-bottom: 16px;">
+			<p style="font-size: 16px;"><strong>ID:</strong> #{{ object.id }}</p>
+			<p style="font-size: 16px;"><strong>Название:</strong> {{ object.artist_name }}</p>
+			<p style="font-size: 16px;"><strong>Страна:</strong> {{ object.country|default:"—" }}</p>
+		</div>
+		<div style="display: flex; gap: 12px; flex-wrap: wrap;">
+			<a class="add-to-cart-btn btn-outline" href="{% url 'artist-update' object.pk %}"
+				>✏️ Редактировать</a
+			>
+			<a class="add-to-cart-btn btn-danger" href="{% url 'artist-delete' object.pk %}"
+				>🗑️ Удалить</a
+			>
+			<a class="add-to-cart-btn" href="{% url 'artist-list' %}">⬅️ Назад к списку</a>
+		</div>
+	</div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,19 @@
+{% extends "base.html" %} {% block content %}
+<div
+	class="product-page"
+	style="max-width: 700px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<h1 class="product-title">Удалить жанр</h1>
+	<div class="card" style="padding: 16px">
+		<p>
+			Вы уверены, что хотите удалить жанр "{{ object.get_genre_name_display }}"?
+		</p>
+		<form method="post">
+			{% csrf_token %}
+			<button class="add-to-cart-btn" type="submit">Удалить</button>
+			<a class="add-to-cart-btn" href="{% url 'genre-list' %}">Отмена</a>
+		</form>
+	</div>
+</div>
+{% endblock %}
+

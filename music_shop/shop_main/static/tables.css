@@ -1,0 +1,145 @@
+/* Basic grid and cards for DB tables and CRUD lists */
+.grid {
+	display: grid;
+	gap: 16px;
+}
+.grid-3 {
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+.table-card {
+	text-decoration: none;
+	color: inherit;
+}
+.table-card .card {
+	padding: 16px;
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.table-card .card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.card-title {
+	margin: 0 0 8px 0;
+}
+.muted {
+	color: #6b7280;
+}
+
+.field {
+	margin-bottom: 12px;
+}
+.field label {
+	display: block;
+	margin-bottom: 4px;
+	color: #374151;
+}
+
+.table th,
+.table td {
+	padding: 8px 12px;
+}
+
+/* Inputs styling */
+input[type='text'],
+input[type='number'],
+input[type='datetime-local'],
+textarea,
+select {
+	width: 100%;
+	padding: 10px 12px;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	background: #fff;
+	color: #111827;
+	outline: none;
+	transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+input:focus,
+textarea:focus,
+select:focus {
+	border-color: #6366f1;
+	box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* Buttons */
+.add-to-cart-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 14px;
+	border-radius: 8px;
+	border: 1px solid #e5e7eb;
+	background: #111827;
+	color: #fff;
+	cursor: pointer;
+	text-decoration: none;
+}
+.add-to-cart-btn:hover {
+	opacity: 0.92;
+}
+.btn-secondary {
+	background: #374151;
+	color: #fff;
+}
+.btn-danger {
+	background: #dc2626;
+	color: #fff;
+}
+.btn-outline {
+	background: #fff;
+	color: #111827;
+	border-color: #d1d5db;
+}
+
+/* Tables */
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+thead th {
+	font-weight: 600;
+	color: #374151;
+}
+tbody tr:nth-child(odd) {
+	background: #fafafa;
+}
+tbody tr:hover {
+	background: #f3f4f6;
+}
+td,
+th {
+	border-top: 1px solid #e5e7eb;
+}
+
+/* Badges */
+.badge {
+	display: inline-block;
+	padding: 4px 8px;
+	border-radius: 999px;
+	font-size: 12px;
+}
+.bg-success {
+	background: #10b981;
+	color: #fff;
+}
+.bg-warning {
+	background: #f59e0b;
+	color: #111827;
+}
+.bg-danger {
+	background: #ef4444;
+	color: #fff;
+}
+.bg-secondary {
+	background: #6b7280;
+	color: #fff;
+}
+.bg-primary {
+	background: #3b82f6;
+	color: #fff;
+}
+.bg-info {
+	background: #06b6d4;
+	color: #fff;
+}

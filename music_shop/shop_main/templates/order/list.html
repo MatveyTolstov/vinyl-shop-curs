@@ -1,0 +1,52 @@
+{% extends "base.html" %} {% block content %}
+<div
+	class="product-page"
+	style="max-width: 1000px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<h1 class="product-title">Заказы</h1>
+	<div class="card" style="padding: 16px">
+		<div style="margin-bottom: 12px">
+			<a class="add-to-cart-btn" href="{% url 'order-create' %}"
+				>Создать заказ</a
+			>
+		</div>
+		{% if records %}
+		<table style="width: 100%; border-collapse: collapse">
+			<thead>
+				<tr>
+					<th style="text-align: left; padding: 8px 0">ID</th>
+					<th style="text-align: left; padding: 8px 0">Пользователь</th>
+					<th style="text-align: left; padding: 8px 0">Дата</th>
+					<th style="text-align: left; padding: 8px 0">Статус</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for o in records %}
+				<tr style="border-top: 1px solid #e5e7eb">
+					<td style="padding: 12px 0">#{{ o.id }}</td>
+					<td style="padding: 12px 0">{{ o.user.username }}</td>
+					<td style="padding: 12px 0">{{ o.date_order|date:"d.m.Y H:i" }}</td>
+					<td style="padding: 12px 0">{{ o.status }}</td>
+					<td style="padding: 12px 0; text-align: right">
+						<a class="add-to-cart-btn" href="{% url 'order-detail' o.pk %}"
+							>Открыть</a
+						>
+						<a class="add-to-cart-btn" href="{% url 'order-update' o.pk %}"
+							>Править</a
+						>
+						<a class="add-to-cart-btn" href="{% url 'order-delete' o.pk %}"
+							>Удалить</a
+						>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% else %}
+		<p class="muted">Пока нет заказов.</p>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}
+

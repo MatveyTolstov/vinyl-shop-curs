@@ -1,0 +1,22 @@
+{% extends "base.html" %} {% block content %}
+<div
+	class="product-page"
+	style="max-width: 800px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<h1 class="product-title">Жанр: {{ object.get_genre_name_display }}</h1>
+	<div class="card" style="padding: 16px">
+		<p><strong>Системное имя:</strong> {{ object.genre_name }}</p>
+		<p><strong>Описание:</strong> {{ object.description }}</p>
+		<div style="margin-top: 12px">
+			<a class="add-to-cart-btn" href="{% url 'genre-update' object.pk %}"
+				>Редактировать</a
+			>
+			<a class="add-to-cart-btn" href="{% url 'genre-delete' object.pk %}"
+				>Удалить</a
+			>
+			<a class="add-to-cart-btn" href="{% url 'genre-list' %}">Назад</a>
+		</div>
+	</div>
+</div>
+{% endblock %}
+

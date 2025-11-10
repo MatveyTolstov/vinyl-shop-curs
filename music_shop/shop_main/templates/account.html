@@ -1,0 +1,54 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'account.css' %}" />
+<div class="account-container">
+	<aside class="account-sidebar">
+		<div class="user-card">
+			<div class="avatar">{{ request.user.username|first|upper }}</div>
+			<div class="user-info">
+				<h3>{{ request.user.username }}</h3>
+				<p>{{ request.user.email|default:"—" }}</p>
+			</div>
+		</div>
+		<nav class="account-nav">
+			<ul>
+				<li class="active"><a href="#profile">Профиль</a></li>
+				<li><a href="#orders">Заказы</a></li>
+			</ul>
+		</nav>
+		<form action="{% url 'logout' %}" method="post">
+			{% csrf_token %}
+			<button type="submit" class="logout-btn">Выйти</button>
+		</form>
+	</aside>
+
+	<section class="account-content">
+		<div id="profile" class="card">
+			<h2>Профиль</h2>
+			<div class="grid">
+				<div>
+					<p class="label">Имя пользователя</p>
+					<p class="value">{{ request.user.username }}</p>
+				</div>
+				<div>
+					<p class="label">Email</p>
+					<p class="value">{{ request.user.email|default:"—" }}</p>
+				</div>
+			</div>
+		</div>
+
+		<div id="orders" class="card">
+			<h2>Мои заказы</h2>
+			<div id="orders-container">
+				<div class="text-center">
+					<div class="spinner-border" role="status">
+						<span class="visually-hidden">Загрузка...</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="{% static 'js/api.js' %}"></script>
+		<script src="{% static 'js/account.js' %}"></script>
+	</section>
+</div>
+{% endblock content %}

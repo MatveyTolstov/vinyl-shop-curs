@@ -1,0 +1,24 @@
+{% extends "base.html" %} {% block content %}
+<div
+	class="product-page"
+	style="max-width: 900px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<h1 class="product-title">Отзыв #{{ object.id }}</h1>
+	<div class="card" style="padding: 16px">
+		<p><strong>Пользователь:</strong> {{ object.user.username }}</p>
+		<p><strong>Товар:</strong> {{ object.product.product_name }}</p>
+		<p><strong>Оценка:</strong> {{ object.rating }}</p>
+		<p><strong>Текст:</strong> {{ object.text }}</p>
+		<div style="margin-top: 12px">
+			<a class="add-to-cart-btn" href="{% url 'review-update' object.pk %}"
+				>Редактировать</a
+			>
+			<a class="add-to-cart-btn" href="{% url 'review-delete' object.pk %}"
+				>Удалить</a
+			>
+			<a class="add-to-cart-btn" href="{% url 'review-list' %}">Назад</a>
+		</div>
+	</div>
+</div>
+{% endblock %}
+

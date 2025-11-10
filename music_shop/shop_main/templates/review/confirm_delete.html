@@ -1,0 +1,17 @@
+{% extends "base.html" %} {% block content %}
+<div
+	class="product-page"
+	style="max-width: 800px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<h1 class="product-title">Удалить отзыв</h1>
+	<div class="card" style="padding: 16px">
+		<p>Вы уверены, что хотите удалить отзыв #{{ object.id }}?</p>
+		<form method="post">
+			{% csrf_token %}
+			<button class="add-to-cart-btn" type="submit">Удалить</button>
+			<a class="add-to-cart-btn" href="{% url 'review-list' %}">Отмена</a>
+		</form>
+	</div>
+</div>
+{% endblock %}
+

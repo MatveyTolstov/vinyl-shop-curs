@@ -1,0 +1,28 @@
+{% extends "base.html" %} {% block content %}
+<div
+	class="product-page"
+	style="max-width: 800px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<h1 class="product-title">Купон: {{ object.code }}</h1>
+	<div class="card" style="padding: 16px">
+		<p><strong>Скидка:</strong> {{ object.discount_percent }}%</p>
+		<p><strong>Активен:</strong> {{ object.active|yesno:"Да,Нет" }}</p>
+		<p>
+			<strong>Период:</strong> {% if object.valid_from %}{{
+			object.valid_from|date:"d.m.Y H:i" }}{% endif %} — {% if object.valid_to
+			%}{{ object.valid_to|date:"d.m.Y H:i" }}{% else %}без ограничений{% endif
+			%}
+		</p>
+		<div style="margin-top: 12px">
+			<a class="add-to-cart-btn" href="{% url 'coupon-update' object.pk %}"
+				>Редактировать</a
+			>
+			<a class="add-to-cart-btn" href="{% url 'coupon-delete' object.pk %}"
+				>Удалить</a
+			>
+			<a class="add-to-cart-btn" href="{% url 'coupon-list' %}">Назад</a>
+		</div>
+	</div>
+</div>
+{% endblock %}
+

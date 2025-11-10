@@ -1,0 +1,58 @@
+{% extends "base.html" %} {% block content %}
+<div
+	class="product-page"
+	style="max-width: 1000px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<h1 class="product-title">Адреса доставки</h1>
+	<div class="card" style="padding: 16px">
+		<div style="margin-bottom: 12px">
+			<a class="add-to-cart-btn" href="{% url 'shippingaddress-create' %}"
+				>Добавить адрес</a
+			>
+		</div>
+		{% if records %}
+		<table style="width: 100%; border-collapse: collapse">
+			<thead>
+				<tr>
+					<th style="text-align: left; padding: 8px 0">Пользователь</th>
+					<th style="text-align: left; padding: 8px 0">ФИО</th>
+					<th style="text-align: left; padding: 8px 0">Город</th>
+					<th style="text-align: left; padding: 8px 0">Адрес</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for s in records %}
+				<tr style="border-top: 1px solid #e5e7eb">
+					<td style="padding: 12px 0">{{ s.user.username }}</td>
+					<td style="padding: 12px 0">{{ s.full_name }}</td>
+					<td style="padding: 12px 0">{{ s.city }}</td>
+					<td style="padding: 12px 0">{{ s.address_line }}</td>
+					<td style="padding: 12px 0; text-align: right">
+						<a
+							class="add-to-cart-btn"
+							href="{% url 'shippingaddress-detail' s.pk %}"
+							>Открыть</a
+						>
+						<a
+							class="add-to-cart-btn"
+							href="{% url 'shippingaddress-update' s.pk %}"
+							>Править</a
+						>
+						<a
+							class="add-to-cart-btn"
+							href="{% url 'shippingaddress-delete' s.pk %}"
+							>Удалить</a
+						>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% else %}
+		<p class="muted">Пока нет адресов.</p>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}
+

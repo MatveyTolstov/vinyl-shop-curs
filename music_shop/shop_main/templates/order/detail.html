@@ -1,0 +1,35 @@
+{% extends "base.html" %} {% block content %}
+<div
+	class="product-page"
+	style="max-width: 1000px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<h1 class="product-title">Заказ #{{ object.id }}</h1>
+	<div class="card" style="padding: 16px">
+		<p><strong>Пользователь:</strong> {{ object.user.username }}</p>
+		<p><strong>Дата:</strong> {{ object.date_order|date:"d.m.Y H:i" }}</p>
+		<p><strong>Статус:</strong> {{ object.status }}</p>
+		{% if object.shipping_address %}
+		<p>
+			<strong>Адрес доставки:</strong> {{ object.shipping_address.full_name }},
+			{{ object.shipping_address.city }}, {{
+			object.shipping_address.address_line }}
+		</p>
+		{% endif %} {% if object.coupon %}
+		<p>
+			<strong>Купон:</strong> {{ object.coupon.code }} ({{
+			object.coupon.discount_percent }}%)
+		</p>
+		{% endif %}
+		<div style="margin-top: 12px">
+			<a class="add-to-cart-btn" href="{% url 'order-update' object.pk %}"
+				>Редактировать</a
+			>
+			<a class="add-to-cart-btn" href="{% url 'order-delete' object.pk %}"
+				>Удалить</a
+			>
+			<a class="add-to-cart-btn" href="{% url 'order-list' %}">Назад</a>
+		</div>
+	</div>
+</div>
+{% endblock %}
+

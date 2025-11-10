@@ -1,0 +1,25 @@
+{% extends "base.html" %} {% block content %}
+<div
+	class="product-page"
+	style="max-width: 800px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<h1 class="product-title">
+		{% if object %}
+			Редактировать заказ
+		{% else %}
+			Создать заказ
+		{% endif %}
+	</h1>
+	<div class="card" style="padding: 16px">
+		<form method="post">
+			{% csrf_token %} 
+			{{ form.non_field_errors }} 
+			{% for f in form.visible_fields %}
+				{% include 'includes/form_field.html' with field=f %} 
+			{% endfor %}
+			<button class="add-to-cart-btn" type="submit">Сохранить</button>
+			<a class="add-to-cart-btn" href="{% url 'order-list' %}">Отмена</a>
+		</form>
+	</div>
+</div>
+{% endblock %}

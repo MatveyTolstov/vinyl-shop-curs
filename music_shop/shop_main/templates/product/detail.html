@@ -1,0 +1,33 @@
+{% extends "base.html" %} {% block content %}
+<div
+	class="product-page"
+	style="max-width: 900px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<h1 class="product-title">Товар: {{ object.product_name }}</h1>
+	<div class="card" style="padding: 16px">
+		<p><strong>Исполнитель:</strong> {{ object.artist.artist_name }}</p>
+		<p><strong>Жанр:</strong> {{ object.genre.get_genre_name_display }}</p>
+		<p><strong>Цена:</strong> {{ object.price }} ₽</p>
+		<p><strong>Остаток:</strong> {{ object.stock_quantity }}</p>
+		{% if object.picture %}
+		<p>
+			<img
+				src="{{ object.picture.url }}"
+				alt="{{ object.product_name }}"
+				style="max-width: 240px"
+			/>
+		</p>
+		{% endif %}
+		<div style="margin-top: 12px">
+			<a class="add-to-cart-btn" href="{% url 'product-update' object.pk %}"
+				>Редактировать</a
+			>
+			<a class="add-to-cart-btn" href="{% url 'product-delete' object.pk %}"
+				>Удалить</a
+			>
+			<a class="add-to-cart-btn" href="{% url 'product-list' %}">Назад</a>
+		</div>
+	</div>
+</div>
+{% endblock %}
+

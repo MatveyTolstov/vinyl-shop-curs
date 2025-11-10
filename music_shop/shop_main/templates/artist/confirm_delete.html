@@ -1,0 +1,22 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'tables.css' %}" />
+<div
+	class="product-page"
+	style="max-width: 700px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<h1 class="product-title">🗑️ Удалить исполнителя</h1>
+	<div class="card" style="padding: 20px; border-radius: 12px; background: #fef2f2;">
+		<p style="font-size: 16px; margin-bottom: 20px;">
+			Вы уверены, что хотите удалить исполнителя <strong>"{{ object.artist_name }}"</strong>?
+		</p>
+		<form method="post">
+			{% csrf_token %}
+			<div style="display: flex; gap: 12px;">
+				<button class="add-to-cart-btn btn-danger" type="submit">✅ Удалить</button>
+				<a class="add-to-cart-btn btn-outline" href="{% url 'artist-list' %}">❌ Отмена</a>
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}
+

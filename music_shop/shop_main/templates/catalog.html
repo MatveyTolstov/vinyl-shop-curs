@@ -1,0 +1,94 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'product_card.css' %}" />
+<link rel="stylesheet" href="{% static 'catalog.css' %}" />
+
+<div class="catalog-container">
+	<div class="sidebar">
+		<form id="filter-form">
+			<h3>Фильтры</h3>
+
+			<div class="search-box">
+				<label for="search">Поиск</label>
+				<input
+					type="text"
+					name="search"
+					id="search"
+					placeholder="Название или исполнитель"
+				/>
+			</div>
+
+			<div class="filter-group">
+				<label for="genre">Жанр</label>
+				<select name="genre" id="genre">
+					<option value="">Все жанры</option>
+				</select>
+			</div>
+
+			<div class="filter-group">
+				<label for="artist">Исполнитель</label>
+				<select name="artist" id="artist">
+					<option value="">Все исполнители</option>
+				</select>
+			</div>
+
+			<div class="filter-group">
+				<label>Цена (₽)</label>
+				<div class="price-range">
+					<input
+						type="number"
+						name="min_price"
+						id="min_price"
+						placeholder="От"
+						min="0"
+					/>
+					<input
+						type="number"
+						name="max_price"
+						id="max_price"
+						placeholder="До"
+						min="0"
+					/>
+				</div>
+			</div>
+
+			<div class="sort-box">
+				<label for="sort">Сортировка</label>
+				<select class="sort-select" name="sort" id="sort">
+					<option value="-created_at">По дате добавления (убыв.)</option>
+					<option value="created_at">По дате добавления (возр.)</option>
+					<option value="price">По цене (возр.)</option>
+					<option value="-price">По цене (убыв.)</option>
+					<option value="product_name">По названию (А-Я)</option>
+					<option value="-product_name">По названию (Я-А)</option>
+				</select>
+			</div>
+
+			<div class="filter-buttons">
+				<button type="button" class="btn-filter" onclick="applyFilters()">
+					Применить
+				</button>
+				<button type="button" class="btn-clear" onclick="clearFilters()">
+					Сбросить
+				</button>
+			</div>
+		</form>
+	</div>
+
+	<div class="catalog-content">
+		<div class="catalog-header">
+			<h1 class="catalog-title">Каталог</h1>
+		</div>
+
+		<div id="products-container">
+			<div class="text-center">
+				<div class="spinner-border" role="status">
+					<span class="visually-hidden">Загрузка...</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="{% static 'js/api.js' %}"></script>
+<script src="{% static 'js/catalog.js' %}"></script>
+{% endblock content %}

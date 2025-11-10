@@ -1,0 +1,12 @@
+<div class="field">
+	{% if field.label %} 
+		{{ field.label_tag }}
+	{% endif %} 
+	 	{{ field }} 
+	{% if field.help_text %}
+		<div class="muted">{{ field.help_text }}</div>
+	{% endif %} 
+	{% if field.errors %}
+		<div class="error-message show">{{ field.errors.0 }}</div>
+	{% endif %}
+</div>

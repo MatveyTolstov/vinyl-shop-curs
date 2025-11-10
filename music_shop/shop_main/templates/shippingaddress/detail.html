@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% block content %}
+<div
+	class="product-page"
+	style="max-width: 900px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<h1 class="product-title">Адрес #{{ object.id }}</h1>
+	<div class="card" style="padding: 16px">
+		<p><strong>Пользователь:</strong> {{ object.user.username }}</p>
+		<p><strong>ФИО:</strong> {{ object.full_name }}</p>
+		<p><strong>Телефон:</strong> {{ object.phone }}</p>
+		<p><strong>Город:</strong> {{ object.city }}</p>
+		<p><strong>Адрес:</strong> {{ object.address_line }}</p>
+		<p><strong>Индекс:</strong> {{ object.postal_code }}</p>
+		<div style="margin-top: 12px">
+			<a
+				class="add-to-cart-btn"
+				href="{% url 'shippingaddress-update' object.pk %}"
+				>Редактировать</a
+			>
+			<a
+				class="add-to-cart-btn"
+				href="{% url 'shippingaddress-delete' object.pk %}"
+				>Удалить</a
+			>
+			<a class="add-to-cart-btn" href="{% url 'shippingaddress-list' %}"
+				>Назад</a
+			>
+		</div>
+	</div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,69 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'tables.css' %}" />
+<div
+	class="product-page"
+	style="max-width: 1400px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+		<h1 class="product-title" style="margin: 0;">Товары</h1>
+		<a class="add-to-cart-btn" href="{% url 'product-create' %}"
+			>➕ Добавить товар</a
+		>
+	</div>
+	<div class="card" style="padding: 20px; border-radius: 12px;">
+		{% if records %}
+		<table class="table">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Название</th>
+					<th>Исполнитель</th>
+					<th>Жанр</th>
+					<th>Цена</th>
+					<th>Остаток</th>
+					<th style="text-align: right;">Действия</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for p in records %}
+				<tr>
+					<td>#{{ p.id }}</td>
+					<td><strong>{{ p.product_name }}</strong></td>
+					<td>{{ p.artist.artist_name }}</td>
+					<td><span class="badge bg-secondary">{{ p.genre.get_genre_name_display }}</span></td>
+					<td>{{ p.price }} ₽</td>
+					<td>
+						{% if p.stock_quantity > 0 %}
+							<span class="badge bg-success">{{ p.stock_quantity }}</span>
+						{% else %}
+							<span class="badge bg-danger">0</span>
+						{% endif %}
+					</td>
+					<td style="text-align: right;">
+						<a class="add-to-cart-btn btn-secondary" href="{% url 'product-detail-crud' p.pk %}"
+							style="font-size: 12px; padding: 6px 10px;"
+							>👁️ Открыть</a
+						>
+						<a class="add-to-cart-btn btn-outline" href="{% url 'product-update' p.pk %}"
+							style="font-size: 12px; padding: 6px 10px;"
+							>✏️ Править</a
+						>
+						<a class="add-to-cart-btn btn-danger" href="{% url 'product-delete' p.pk %}"
+							style="font-size: 12px; padding: 6px 10px;"
+							>🗑️ Удалить</a
+						>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% else %}
+		<p class="muted" style="text-align: center; padding: 40px 0;">Пока нет товаров.</p>
+		{% endif %}
+	</div>
+	<div style="margin-top: 16px;">
+		<a class="add-to-cart-btn btn-outline" href="{% url 'db-index' %}">⬅️ Назад к базе данных</a>
+	</div>
+</div>
+{% endblock %}
+

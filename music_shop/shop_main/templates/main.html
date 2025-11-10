@@ -1,0 +1,84 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'main.css' %}" />
+<link rel="stylesheet" href="{% static 'category.css' %}" />
+<section id="home" class="hero">
+	<div class="hero-content">
+		<h1>Магазин виниловых пластинок</h1>
+		<p>
+			Мы коллекционируем пластинки сами, для нас это - любимое хобби на
+			протяжении многих лет
+		</p>
+		<a href="{% url "catalog" %}" class="cta-button">Смотреть каталог</a>
+	</div>
+</section>
+<section id="categories" class="categories">
+	<div class="container">
+		<h2>Жанры</h2>
+		<div class="categories-grid" id="genres-container">
+			<div class="text-center">
+				<div class="spinner-border" role="status">
+					<span class="visually-hidden">Загрузка...</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section id="about" class="about">
+	<div class="container">
+		<div class="about-content">
+			<div class="about-text">
+				<h2>О нас</h2>
+				<p>
+					Мы коллекционируем пластинки сами, для нас это - любимое хобби на
+					протяжении многих лет. Мы специализируемся на новом и секонд-хенд
+					виниле в близких нам самим жанрах: рок, металл, панк, инди,
+					альтернатива, гранж, прогрессив рок, хардкор, глэм, гараж.
+				</p>
+
+				<h3>Наши принципы:</h3>
+				<ul>
+					<li>Мы - за осознанное слушание музыки</li>
+					<li>Мы - за сохранение авторских замыслов</li>
+					<li>Мы - за то, чтобы музыка жила в предметах</li>
+					<li>Мы - за волнение поиска и радость от находки</li>
+				</ul>
+			</div>
+			<div class="about-image">
+				<div class="vinyl-stack">💿</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section id="contact" class="contact">
+	<div class="container">
+		<h2>Контакты</h2>
+		<div class="contact-info">
+			<div class="contact-item">
+				<h3>Адрес магазина</h3>
+				<p>
+					г. Москва, ул. Ольховская, д. 14, стр. 5<br />
+					(м. Бауманская, Красносельская)
+				</p>
+			</div>
+			<div class="contact-item">
+				<h3>Режим работы</h3>
+				<p>Ежедневно с 11:00 до 20:00</p>
+			</div>
+			<div class="contact-item">
+				<h3>Телефон</h3>
+				<p>+7 (495) 928-01-94</p>
+			</div>
+			<div class="contact-item">
+				<h3>Email</h3>
+				<p>info@vinylshop.ru</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script src="{% static 'js/api.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+
+{% endblock content %}

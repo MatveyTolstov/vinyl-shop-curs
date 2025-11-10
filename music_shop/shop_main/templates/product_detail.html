@@ -1,0 +1,31 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'product_card.css' %}" />
+<link rel="stylesheet" href="{% static 'product_detail.css' %}" />
+
+<div id="product-container">
+	<div class="text-center">
+		<div class="spinner-border" role="status">
+			<span class="visually-hidden">Загрузка...</span>
+		</div>
+	</div>
+</div>
+
+<div class="product-secondary" id="reviews-container" style="display: none">
+	<div class="card">
+		<h2 class="card-title">Оставить комментарий</h2>
+		<div id="review-form-container">
+			<p class="muted">Загрузка...</p>
+		</div>
+	</div>
+
+	<div class="card">
+		<h2 class="card-title">Комментарии</h2>
+		<div id="reviews-list">
+			<p class="muted">Загрузка...</p>
+		</div>
+	</div>
+</div>
+
+<script src="{% static 'js/api.js' %}"></script>
+<script src="{% static 'js/product_detail.js' %}"></script>
+{% endblock content %}

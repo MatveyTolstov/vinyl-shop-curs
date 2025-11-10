@@ -1,0 +1,50 @@
+{% extends "base.html" %} {% block content %}
+<div
+	class="product-page"
+	style="max-width: 1000px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<h1 class="product-title">Отзывы</h1>
+	<div class="card" style="padding: 16px">
+		<div style="margin-bottom: 12px">
+			<a class="add-to-cart-btn" href="{% url 'review-create' %}"
+				>Добавить отзыв</a
+			>
+		</div>
+		{% if records %}
+		<table style="width: 100%; border-collapse: collapse">
+			<thead>
+				<tr>
+					<th style="text-align: left; padding: 8px 0">Пользователь</th>
+					<th style="text-align: left; padding: 8px 0">Товар</th>
+					<th style="text-align: left; padding: 8px 0">Оценка</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for r in records %}
+				<tr style="border-top: 1px solid #e5e7eb">
+					<td style="padding: 12px 0">{{ r.user.username }}</td>
+					<td style="padding: 12px 0">{{ r.product.product_name }}</td>
+					<td style="padding: 12px 0">{{ r.rating }}</td>
+					<td style="padding: 12px 0; text-align: right">
+						<a class="add-to-cart-btn" href="{% url 'review-detail' r.pk %}"
+							>Открыть</a
+						>
+						<a class="add-to-cart-btn" href="{% url 'review-update' r.pk %}"
+							>Править</a
+						>
+						<a class="add-to-cart-btn" href="{% url 'review-delete' r.pk %}"
+							>Удалить</a
+						>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% else %}
+		<p class="muted">Пока нет отзывов.</p>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}
+

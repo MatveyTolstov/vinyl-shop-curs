@@ -1,0 +1,90 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'login.css' %}" />
+<div class="login-container">
+	<div class="login-card">
+		<div class="login-header">
+			<h2>Регистрация</h2>
+			<p>Создайте учетную запись, чтобы продолжить</p>
+		</div>
+
+		<form class="login-form" method="post" novalidate>
+			{% csrf_token %} {% if form.non_field_errors %}
+			<div class="error-message show">
+				{% for error in form.non_field_errors %} {{ error }} {% endfor %}
+			</div>
+			{% endif %}
+
+			<div class="form-group {% if form.username.errors %}error{% endif %}">
+				<div class="input-wrapper">
+					{{ form.username }}
+				</div>
+				{% if form.username.errors %}
+				<span class="error-message show"> {{ form.username.errors.0 }} </span>
+				{% endif %}
+			</div>
+
+			<div class="form-group {% if form.email.errors %}error{% endif %}">
+				<div class="input-wrapper">
+					{{ form.email }}
+					<label for="id_email">Email</label>
+				</div>
+				{% if form.email.errors %}
+				<span class="error-message show"> {{ form.email.errors.0 }} </span>
+				{% endif %}
+			</div>
+
+			<div class="form-group {% if form.password1.errors %}error{% endif %}">
+				<div class="input-wrapper">
+					{{ form.password1 }}
+					<button type="button" class="password-toggle" id="passwordToggle1">
+						<span class="toggle-icon"></span>
+					</button>
+				</div>
+				{% if form.password1.errors %}
+				<span class="error-message show"> {{ form.password1.errors.0 }} </span>
+				{% endif %}
+			</div>
+
+			<div class="form-group {% if form.password2.errors %}error{% endif %}">
+				<div class="input-wrapper">
+					{{ form.password2 }}
+					<button type="button" class="password-toggle" id="passwordToggle2">
+						<span class="toggle-icon"></span>
+					</button>
+				</div>
+				{% if form.password2.errors %}
+				<span class="error-message show"> {{ form.password2.errors.0 }} </span>
+				{% endif %}
+			</div>
+
+			<button type="submit" class="login-btn">
+				<span class="btn-text">Зарегистрироваться</span>
+				<span class="btn-loader"></span>
+			</button>
+		</form>
+
+		<div class="signup-link">
+			<p>Уже есть учетная запись? <a href="{% url 'login' %}">Войдите</a></p>
+		</div>
+	</div>
+</div>
+<script>
+	function attachToggle(inputId, toggleId) {
+		const input = document.getElementById(inputId);
+		const btn = document.getElementById(toggleId);
+		if (!input || !btn) return;
+		btn.addEventListener('click', () => {
+			const icon = btn.querySelector('.toggle-icon');
+			if (input.type === 'password') {
+				input.type = 'text';
+				icon.classList.add('show-password');
+			} else {
+				input.type = 'password';
+				icon.classList.remove('show-password');
+			}
+		});
+	}
+	attachToggle('id_password1', 'passwordToggle1');
+	attachToggle('id_password2', 'passwordToggle2');
+</script>
+{% endblock content %}

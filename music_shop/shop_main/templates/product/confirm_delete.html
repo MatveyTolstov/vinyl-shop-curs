@@ -1,0 +1,17 @@
+{% extends "base.html" %} {% block content %}
+<div
+	class="product-page"
+	style="max-width: 900px; margin: 100px auto 40px; padding: 0 16px"
+>
+	<h1 class="product-title">Удалить товар</h1>
+	<div class="card" style="padding: 16px">
+		<p>Вы уверены, что хотите удалить товар "{{ object.product_name }}"?</p>
+		<form method="post">
+			{% csrf_token %}
+			<button class="add-to-cart-btn" type="submit">Удалить</button>
+			<a class="add-to-cart-btn" href="{% url 'product-list' %}">Отмена</a>
+		</form>
+	</div>
+</div>
+{% endblock %}
+
