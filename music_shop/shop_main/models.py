@@ -136,3 +136,63 @@ class Coupon(models.Model):
 
     def __str__(self):
         return f"{self.code} ({self.discount_percent}%)"
+
+
+class LogEntry(models.Model):
+    """Модель для хранения логов действий пользователей"""
+    
+    ACTION_CHOICES = [
+        ("login", "Вход в систему"),
+        ("logout", "Выход из системы"),
+        ("signup", "Регистрация"),
+        ("order_created", "Создан заказ"),
+        ("order_updated", "Обновлен заказ"),
+        ("product_viewed", "Просмотр товара"),
+        ("cart_added", "Добавлено в корзину"),
+        ("cart_removed", "Удалено из корзины"),
+        ("review_created", "Создан отзыв"),
+        ("coupon_applied", "Применен купон"),
+        ("page_visited", "Посещение страницы"),
+    ]
+
+    user = models.ForeignKey(
+        User, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name="log_entries"
+    )
+    action = models.CharField(max_length=50, choices=ACTION_CHOICES)
+    description = models.TextField(blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    order = models.ForeignKey(
+        Order, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name="log_entries"
+    )
+    product = models.ForeignKey(
+        Product, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name="log_entries"
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Лог"
+        verbose_name_plural = "Логи"
+        indexes = [
+            models.Index(fields=["-created_at"]),
+            models.Index(fields=["user", "-created_at"]),
+            models.Index(fields=["action", "-created_at"]),
+        ]
+
+    def __str__(self):
+        username = self.user.username if self.user else "Анонимный"
+        return f"{username} - {self.get_action_display()} ({self.created_at.strftime('%Y-%m-%d %H:%M')})"
