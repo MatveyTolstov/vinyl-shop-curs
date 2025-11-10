@@ -19,19 +19,9 @@ def create_manager_group(sender, **kwargs):
 
 
 @receiver(post_save, sender=Order)
-def log_order_created(sender, instance, created, **kwargs):
-    """Логирует создание заказа"""
-    # Отключаем автоматическое логирование через сигнал, так как логирование
-    # происходит вручную в API после создания всех OrderItem'ов
-    # Это нужно для корректного расчета суммы заказа
-    pass
-
-
-@receiver(post_save, sender=Order)
 def log_order_updated(sender, instance, created, **kwargs):
     """Логирует обновление заказа"""
     if not created:
-        # Проверяем, изменился ли статус
         if hasattr(instance, '_old_status') and instance._old_status != instance.status:
             create_log_entry(
                 action='order_updated',
