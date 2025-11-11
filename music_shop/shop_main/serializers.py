@@ -9,6 +9,7 @@ from .models import (
     Review,
     ShippingAddress,
     Coupon,
+    Favorite,
 )
 from decimal import Decimal
 
@@ -212,3 +213,27 @@ class ProductFilterSerializer(serializers.Serializer):
         max_digits=10, decimal_places=2, required=False
     )
     search = serializers.CharField(required=False)
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
+    product_id = serializers.PrimaryKeyRelatedField(
+        source="product", queryset=Product.objects.all(), write_only=True
+    )
+
+    class Meta:
+        model = Favorite
+        fields = ["id", "product", "product_id", "created_at"]
+        read_only_fields = ["id", "created_at", "product"]
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        product = validated_data["product"]
+        favorite, _ = Favorite.objects.get_or_create(user=user, product=product)
+        return favorite
+
+
+class FavoriteToggleSerializer(serializers.Serializer):
+    product_id = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), source="product"
+    )

@@ -1,0 +1,25 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'product_card.css' %}" />
+<link rel="stylesheet" href="{% static 'catalog.css' %}" />
+
+<div class="catalog-container">
+	<div class="catalog-content" style="width: 100%;">
+		<div class="catalog-header" style="justify-content: space-between; align-items: center;">
+			<h1 class="catalog-title">Избранное</h1>
+		</div>
+
+		<div id="favorites-container">
+			<div class="text-center">
+				<div class="spinner-border" role="status">
+					<span class="visually-hidden">Загрузка...</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="{% static 'js/api.js' %}"></script>
+<script src="{% static 'js/favorites.js' %}"></script>
+{% endblock content %}
+
+

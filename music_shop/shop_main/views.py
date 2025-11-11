@@ -161,6 +161,10 @@ class CartView(TemplateView):
     template_name = "cart.html"
 
 
+class FavoritesView(TemplateView):
+    template_name = "favorites.html"
+
+
 class AdminOverviewView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = "overview.html"
     login_url = reverse_lazy("login")

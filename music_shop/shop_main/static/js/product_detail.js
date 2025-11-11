@@ -45,6 +45,14 @@ function displayProduct(product) {
 
 	const html = `
         <div class="product-page">
+            <button 
+                class="fav-btn" 
+                aria-label="Избранное" 
+                data-product-id="${product.id}"
+                type="button"
+                style="position:absolute; right:10px; top:10px; background:#fff; border:1px solid #e5e7eb; border-radius:9999px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2; pointer-events:auto;">
+                <span class="heart" style="font-size:16px;">♡</span>
+            </button>
             <div>
                 ${
 									product.picture
@@ -80,6 +88,32 @@ function displayProduct(product) {
     `;
 
 	container.innerHTML = html;
+
+	// Init favorite state
+	const favBtn = container.querySelector('.fav-btn');
+	const heart = favBtn.querySelector('.heart');
+	if (typeof ensureFavoritesLoaded === 'function') {
+		ensureFavoritesLoaded().then(() => {
+			try {
+				if (typeof isFavorite === 'function' && isFavorite(product.id)) {
+					heart.textContent = '❤';
+					heart.style.color = '#dc2626';
+				}
+			} catch (e) {}
+		}).catch(() => {});
+	}
+	favBtn.addEventListener('click', async (e) => {
+		e.stopPropagation();
+		if (typeof toggleFavorite !== 'function') return;
+		const result = await toggleFavorite(product.id);
+		if (result.status === 'added') {
+			heart.textContent = '❤';
+			heart.style.color = '#dc2626';
+		} else if (result.status === 'removed') {
+			heart.textContent = '♡';
+			heart.style.color = '';
+		}
+	});
 }
 
 // Загрузка отзывов

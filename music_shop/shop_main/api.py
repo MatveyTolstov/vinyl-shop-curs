@@ -19,6 +19,7 @@ from .models import (
     Review,
     ShippingAddress,
     Coupon,
+    Favorite,
 )
 from .serializers import (
     GenreSerializer,
@@ -36,6 +37,8 @@ from .serializers import (
     CheckoutSerializer,
     ApplyCouponSerializer,
     ProductFilterSerializer,
+    FavoriteSerializer,
+    FavoriteToggleSerializer,
 )
 
 
@@ -468,6 +471,56 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+class FavoriteViewSet(viewsets.ModelViewSet):
+    """Избранные товары текущего пользователя"""
+    serializer_class = FavoriteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Favorite.objects.filter(user=self.request.user).select_related("product")
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    @action(detail=False, methods=["get"])
+    def products(self, request):
+        """Вернуть список товаров (Product) из избранного"""
+        favorites = self.get_queryset()
+        products = [fav.product for fav in favorites]
+        data = ProductSerializer(products, many=True).data
+        return Response(data)
+
+    @action(detail=False, methods=["post"])
+    def toggle(self, request):
+        """Добавить/удалить товар из избранного по product_id"""
+        serializer = FavoriteToggleSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        product = serializer.validated_data["product"]
+        fav, created = Favorite.objects.get_or_create(user=request.user, product=product)
+        if not created:
+            fav.delete()
+            return Response({"status": "removed"})
+        return Response({"status": "added"})
+
+    @action(detail=False, methods=["post"])
+    def add(self, request):
+        """Добавить конкретный товар по product_id"""
+        serializer = FavoriteToggleSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        product = serializer.validated_data["product"]
+        Favorite.objects.get_or_create(user=request.user, product=product)
+        return Response({"status": "added"})
+
+    @action(detail=False, methods=["post"])
+    def remove(self, request):
+        """Удалить конкретный товар по product_id"""
+        serializer = FavoriteToggleSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        product = serializer.validated_data["product"]
+        Favorite.objects.filter(user=request.user, product=product).delete()
+        return Response({"status": "removed"})
+
+
 router = DefaultRouter()
 router.register(r"genres", GenreViewSet, basename="genre")
 router.register(r"artists", ArtistViewSet, basename="artist")
@@ -479,3 +532,4 @@ router.register(r"addresses", ShippingAddressViewSet, basename="shippingaddress"
 router.register(r"coupons", CouponViewSet, basename="coupon")
 router.register(r"cart", CartViewSet, basename="cart")
 router.register(r"users", UserViewSet, basename="user")
+router.register(r"favorites", FavoriteViewSet, basename="favorite")

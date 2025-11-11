@@ -196,3 +196,22 @@ class LogEntry(models.Model):
     def __str__(self):
         username = self.user.username if self.user else "Анонимный"
         return f"{username} - {self.get_action_display()} ({self.created_at.strftime('%Y-%m-%d %H:%M')})"
+
+
+class Favorite(models.Model):
+    """Избранные товары пользователя"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorites")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="favorited_by")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "product")
+        indexes = [
+            models.Index(fields=["user", "product"]),
+            models.Index(fields=["-created_at"]),
+        ]
+        verbose_name = "Избранное"
+        verbose_name_plural = "Избранные"
+
+    def __str__(self):
+        return f"{self.user.username} → {self.product.product_name}"

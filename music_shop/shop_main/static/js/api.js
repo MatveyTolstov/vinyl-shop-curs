@@ -3,6 +3,7 @@ const API_BASE_URL = '/api/v1';
 
 // Глобальная корзина
 let cart = {};
+let favoritesCache = new Set();
 
 // Получение CSRF токена
 function getCsrfToken() {
@@ -45,6 +46,59 @@ function addToCart(productId) {
 	cart[productIdStr] = (cart[productIdStr] || 0) + 1;
 	saveCartToCookies();
 	showNotification('Товар добавлен в корзину!');
+}
+
+// -------- Избранное (работа через API) --------
+async function fetchFavoritesProducts() {
+	try {
+		const res = await fetch(`${API_BASE_URL}/favorites/products/`, { credentials: 'same-origin' });
+		if (res.status === 401) return [];
+		if (!res.ok) throw new Error(res.statusText);
+		const products = await res.json();
+		favoritesCache = new Set(products.map(p => p.id));
+		return products;
+	} catch (e) {
+		console.error('Не удалось получить избранное:', e);
+		return [];
+	}
+}
+
+async function ensureFavoritesLoaded() {
+	if (favoritesCache.size === 0) {
+		await fetchFavoritesProducts();
+	}
+}
+
+function isFavorite(productId) {
+	return favoritesCache.has(productId);
+}
+
+async function toggleFavorite(productId) {
+	try {
+		const res = await fetch(`${API_BASE_URL}/favorites/toggle/`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+			credentials: 'same-origin',
+			body: JSON.stringify({ product_id: productId })
+		});
+		if (res.status === 401) {
+			showNotification('Войдите, чтобы использовать избранное', 'error');
+			return { status: 'unauth' };
+		}
+		const data = await res.json();
+		if (data.status === 'added') {
+			favoritesCache.add(productId);
+			showNotification('Добавлено в избранное!');
+		} else if (data.status === 'removed') {
+			favoritesCache.delete(productId);
+			showNotification('Удалено из избранного', 'success');
+		}
+		return data;
+	} catch (e) {
+		console.error('Ошибка toggleFavorite:', e);
+		showNotification('Ошибка изменения избранного', 'error');
+		return { status: 'error' };
+	}
 }
 
 // Показ уведомления
