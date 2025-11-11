@@ -79,6 +79,7 @@
 }
 
 .add-to-cart-form {
+	color: #000;
 	margin: 0 20px 20px;
 }
 
@@ -105,14 +106,53 @@
 	cursor: not-allowed;
 }
 
+@media (max-width: 968px) {
+	.product-card {
+		width: 100%;
+		max-width: 100%;
+	}
+}
+
 @media (max-width: 768px) {
 	.product-card {
 		width: 100%;
-		max-width: 280px;
+		max-width: 100%;
 	}
 
 	.product-image {
-		height: 250px;
+		height: 220px;
 		padding: 15px;
+	}
+
+	.product-card h3 {
+		font-size: 1rem;
+		padding: 15px 15px 8px;
+	}
+
+	.artist,
+	.genre {
+		padding: 0 15px;
+		font-size: 0.85rem;
+	}
+
+	.price {
+		padding: 0 15px;
+		font-size: 1.2rem;
+	}
+
+	.add-to-cart-form {
+		margin: 0 15px 15px;
+	}
+}
+
+@media (max-width: 480px) {
+	.product-image {
+		height: 200px;
+		padding: 10px;
+	}
+
+	.product-card h3 {
+		font-size: 0.95rem;
+		min-height: 50px;
 	}
 }

@@ -1,22 +1,87 @@
 <div class="logo">
-    <h2>Vinyl Shop</h2>
+	<h2>Vinyl Shop</h2>
 </div>
 
-<nav class="navbar">
-    <ul class="nav-list">
-        <li><a href="{% url 'main' %}">Главная</a></li>
-        <li><a href="{% url 'catalog' %}">Каталог</a></li>
-        <li><a href="{% url 'account' %}">Кабинет</a></li>
-        <li><a href="{% url 'cart' %}">Корзина</a></li>
-        
-        {% if user.is_staff or user.is_superuser %}
-            <li><a href="{% url 'db-index' %}">Управление базой данных</a></li>
-        {% elif user.groups.all %}
-            {% for group in user.groups.all %}
-                {% if group.name == 'Manager' %}
-                    <li><a href="{% url 'db-index' %}">Управление товарами</a></li>
-                {% endif %}
-            {% endfor %}
-        {% endif %}
-    </ul>
+<button class="menu-toggle" id="menuToggle" aria-label="Меню">
+	<span></span>
+	<span></span>
+	<span></span>
+</button>
+
+<div class="navbar-overlay" id="navbarOverlay"></div>
+
+<nav class="navbar" id="navbar">
+	<ul class="nav-list">
+		<li><a href="{% url 'main' %}">Главная</a></li>
+		<li><a href="{% url 'catalog' %}">Каталог</a></li>
+		<li><a href="{% url 'account' %}">Кабинет</a></li>
+		<li><a href="{% url 'cart' %}">Корзина</a></li>
+
+		{% if user.is_staff or user.is_superuser %}
+			<li><a href="{% url 'db-index' %}">Управление базой данных</a></li>
+		{% elif user.groups.all %}
+			{% for group in user.groups.all %} 
+				{% if group.name == 'Manager' %}
+					<li><a href="{% url 'db-index' %}">Управление товарами</a></li>
+				{% endif %}
+			{% endfor %} 
+		{% endif %}
+	</ul>
 </nav>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		const menuToggle = document.getElementById('menuToggle');
+		const navbar = document.getElementById('navbar');
+		const overlay = document.getElementById('navbarOverlay');
+
+		function toggleMenu() {
+			navbar.classList.toggle('active');
+			menuToggle.classList.toggle('active');
+			if (overlay) {
+				overlay.classList.toggle('active');
+			}
+		}
+
+		function closeMenu() {
+			navbar.classList.remove('active');
+			menuToggle.classList.remove('active');
+			if (overlay) {
+				overlay.classList.remove('active');
+			}
+		}
+
+		if (menuToggle && navbar) {
+			menuToggle.addEventListener('click', function (e) {
+				e.stopPropagation();
+				toggleMenu();
+			});
+
+			const navLinks = navbar.querySelectorAll('a');
+			navLinks.forEach(link => {
+				link.addEventListener('click', function () {
+					closeMenu();
+				});
+			});
+
+			if (overlay) {
+				overlay.addEventListener('click', function () {
+					closeMenu();
+				});
+			}
+
+			document.addEventListener('click', function (event) {
+				const isClickInsideNav = navbar.contains(event.target);
+				const isClickOnToggle = menuToggle.contains(event.target);
+
+				if (
+					!isClickInsideNav &&
+					!isClickOnToggle &&
+					navbar.classList.contains('active')
+				) {
+					closeMenu();
+				}
+			});
+		}
+	});
+</script>
