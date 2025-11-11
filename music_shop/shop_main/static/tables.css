@@ -66,30 +66,55 @@ select:focus {
 .add-to-cart-btn {
 	display: inline-flex;
 	align-items: center;
+	justify-content: center;
 	gap: 6px;
-	padding: 8px 14px;
+	padding: 10px 16px;
 	border-radius: 8px;
 	border: 1px solid #e5e7eb;
 	background: #111827;
 	color: #fff;
 	cursor: pointer;
 	text-decoration: none;
+	font-size: 14px;
+	font-weight: 500;
+	white-space: nowrap;
+	transition: all 0.2s ease;
+	min-height: 36px;
 }
 .add-to-cart-btn:hover {
 	opacity: 0.92;
+	transform: translateY(-1px);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.add-to-cart-btn:active {
+	transform: translateY(0);
 }
 .btn-secondary {
 	background: #374151;
 	color: #fff;
+	border-color: #374151;
+}
+.btn-secondary:hover {
+	background: #4b5563;
+	border-color: #4b5563;
 }
 .btn-danger {
 	background: #dc2626;
 	color: #fff;
+	border-color: #dc2626;
+}
+.btn-danger:hover {
+	background: #ef4444;
+	border-color: #ef4444;
 }
 .btn-outline {
 	background: #fff;
 	color: #111827;
 	border-color: #d1d5db;
+}
+.btn-outline:hover {
+	background: #f9fafb;
+	border-color: #9ca3af;
 }
 
 /* Tables */
@@ -110,6 +135,20 @@ tbody tr:hover {
 td,
 th {
 	border-top: 1px solid #e5e7eb;
+}
+
+/* Улучшаем отображение кнопок в таблицах на десктопе */
+td:last-child {
+	white-space: nowrap;
+}
+
+td:last-child .add-to-cart-btn {
+	margin-right: 6px;
+	margin-bottom: 4px;
+}
+
+td:last-child .add-to-cart-btn:last-child {
+	margin-right: 0;
 }
 
 /* Badges */
@@ -142,4 +181,92 @@ th {
 .bg-info {
 	background: #06b6d4;
 	color: #fff;
+}
+
+/* Адаптивность для таблиц */
+@media (max-width: 768px) {
+	.table {
+		display: block;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.table thead,
+	.table tbody,
+	.table tr,
+	.table td,
+	.table th {
+		display: block;
+	}
+
+	.table thead {
+		display: none;
+	}
+
+	.table tr {
+		border: 1px solid #e5e7eb;
+		border-radius: 8px;
+		margin-bottom: 12px;
+		padding: 12px;
+		background: #fff;
+	}
+
+	.table td {
+		border: none;
+		padding: 8px 0;
+		text-align: left;
+		position: relative;
+		padding-left: 50%;
+	}
+
+	.table td:before {
+		content: attr(data-label);
+		position: absolute;
+		left: 0;
+		width: 45%;
+		font-weight: 600;
+		color: #374151;
+	}
+
+	.table-card .card {
+		padding: 12px;
+	}
+
+	.grid-3 {
+		grid-template-columns: 1fr;
+	}
+
+	.add-to-cart-btn {
+		padding: 8px 12px;
+		font-size: 13px;
+		min-height: 32px;
+	}
+
+	/* Улучшаем отображение кнопок в колонке действий */
+	.table td:last-child {
+		padding-left: 0 !important;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		justify-content: flex-start;
+		margin-top: 8px;
+	}
+
+	.table td:last-child:before {
+		display: none;
+	}
+
+	.table td:last-child .add-to-cart-btn {
+		flex: 1 1 auto;
+		min-width: 100px;
+		text-align: center;
+	}
+
+	/* Для очень маленьких экранов */
+	@media (max-width: 480px) {
+		.table td:last-child .add-to-cart-btn {
+			flex: 1 1 100%;
+			min-width: 100%;
+		}
+	}
 }
