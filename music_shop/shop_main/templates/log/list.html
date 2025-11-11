@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'main.css' %}" />
+<link rel="stylesheet" href="{% static 'tables.css' %}" />
+
+<div class="product-page" style="max-width: 1600px; margin: 100px auto 40px; padding: 0 16px">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h1 class="product-title" style="margin: 0;">
+            Логи действий пользователей
+        </h1>
+    </div>
+
+    <div class="card" style="padding: 20px; border-radius: 12px; margin-bottom: 24px">
+        <form method="get" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; align-items: end;">
+            <div>
+                <label for="action" style="display: block; margin-bottom: 8px; font-weight: 500;">Действие:</label>
+                <select name="action" id="action" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ddd;">
+                    <option value="">Все действия</option>
+                    {% for action_code, action_name in action_choices %}
+                    <option value="{{ action_code }}" {% if request.GET.action == action_code %}selected{% endif %}>
+                        {{ action_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label for="user" style="display: block; margin-bottom: 8px; font-weight: 500;">Пользователь:</label>
+                <select name="user" id="user" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ddd;">
+                    <option value="">Все пользователи</option>
+                    {% for u in users %}
+                    <option value="{{ u.id }}" {% if request.GET.user == u.id|stringformat:"s" %}selected{% endif %}>
+                        {{ u.username }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label for="search" style="display: block; margin-bottom: 8px; font-weight: 500;">Поиск:</label>
+                <input 
+                    type="text" 
+                    name="search" 
+                    id="search" 
+                    value="{{ request.GET.search }}"
+                    placeholder="Поиск по описанию..."
+                    style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ddd;"
+                >
+            </div>
+            
+            <div>
+                <button type="submit" class="add-to-cart-btn" style="width: 100%; padding: 10px;">
+                    Применить фильтры
+                </button>
+            </div>
+            
+            {% if request.GET.action or request.GET.user or request.GET.search %}
+            <div>
+                <a href="{% url 'log-list' %}" class="add-to-cart-btn btn-outline" style="width: 100%; padding: 10px; text-align: center; display: block;">
+                    Сбросить
+                </a>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+
+    <div class="card" style="padding: 20px; border-radius: 12px; margin-bottom: 24px">
+        <h2 style="margin-top: 0; margin-bottom: 20px">Записи логов</h2>
+        
+        {% if logs %}
+        <div style="overflow-x: auto">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Дата и время</th>
+                        <th>Пользователь</th>
+                        <th>Действие</th>
+                        <th>Описание</th>
+                        <th>IP адрес</th>
+                        <th>Связанный объект</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>#{{ log.id }}</td>
+                        <td>{{ log.created_at|date:"d.m.Y H:i:s" }}</td>
+                        <td>
+                            {% if log.user %}
+                            <strong>{{ log.user.username }}</strong>
+                            {% else %}
+                            <span style="color: #999;">Анонимный</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-primary">{{ log.get_action_display }}</span>
+                        </td>
+                        <td>{{ log.description|truncatewords:15 }}</td>
+                        <td>{{ log.ip_address|default:"—" }}</td>
+                        <td>
+                            {% if log.order %}
+                            <a href="{% url 'order-detail' log.order.pk %}" style="color: #007bff;">
+                                Заказ #{{ log.order.id }}
+                            </a>
+                            {% elif log.product %}
+                            <a href="{% url 'product-detail' log.product.pk %}" style="color: #007bff;">
+                                {{ log.product.product_name|truncatewords:3 }}
+                            </a>
+                            {% else %}
+                            <span style="color: #999;">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% if is_paginated %}
+        <div style="margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 10px;">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.action %}&action={{ request.GET.action }}{% endif %}{% if request.GET.user %}&user={{ request.GET.user }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" 
+               class="add-to-cart-btn btn-outline" style="padding: 8px 16px;">
+                Предыдущая
+            </a>
+            {% endif %}
+            
+            <span style="padding: 8px 16px;">
+                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+            </span>
+            
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.action %}&action={{ request.GET.action }}{% endif %}{% if request.GET.user %}&user={{ request.GET.user }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" 
+               class="add-to-cart-btn btn-outline" style="padding: 8px 16px;">
+                Следующая
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% else %}
+        <p class="muted" style="text-align: center; padding: 40px 0">Нет записей</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

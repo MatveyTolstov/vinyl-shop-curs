@@ -157,7 +157,9 @@ class OrderViewSet(viewsets.ModelViewSet):
     def my_orders(self, request):
         """Получить заказы текущего пользователя"""
         from django.db.models import Prefetch
-        orders = Order.objects.filter(user=request.user).prefetch_related(
+        orders = Order.objects.filter(user=request.user).select_related(
+            'user', 'shipping_address', 'coupon'
+        ).prefetch_related(
             Prefetch('orderitem_set', queryset=OrderItem.objects.select_related('product'))
         ).order_by("-date_order")
         serializer = self.get_serializer(orders, many=True)
@@ -382,11 +384,10 @@ class CartViewSet(viewsets.ViewSet):
 
             order = Order.objects.create(
                 user=request.user,
-                status="Placed",
+                status="pending",
                 shipping_address=shipping_address
             )
             
-
             coupon_code = serializer.validated_data.get('coupon_code', '').strip()
             if coupon_code:
                 try:
@@ -418,6 +419,31 @@ class CartViewSet(viewsets.ViewSet):
 
                 product.stock_quantity -= qty
                 product.save()
+            
+            # Логируем создание заказа ПОСЛЕ создания всех OrderItem'ов
+            from .logger_utils import create_log_entry
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                ip_address = x_forwarded_for.split(',')[0]
+            else:
+                ip_address = request.META.get('REMOTE_ADDR')
+            user_agent = request.META.get('HTTP_USER_AGENT', '')[:255]
+            
+            # Обновляем заказ из БД, чтобы получить актуальные OrderItem'ы
+            order.refresh_from_db()
+            total = order.get_total()
+            description = f"Создан заказ #{order.id} на сумму {total:.2f} ₽"
+            if order.coupon:
+                description += f" (применен купон {order.coupon.code})"
+            
+            create_log_entry(
+                action='order_created',
+                user=request.user,
+                description=description,
+                ip_address=ip_address,
+                user_agent=user_agent,
+                order=order,
+            )
             
             return Response({
                 "message": "Заказ создан",

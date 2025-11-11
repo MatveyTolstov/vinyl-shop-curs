@@ -21,13 +21,22 @@
 			{% if is_manager and not is_staff %} Управление продуктами {% else %}
 			Управление базой данных {% endif %}
 		</h1>
-		<a
-			href="{% url 'pdf-report' %}"
-			class="add-to-cart-btn"
-			style="margin-left: 20px"
-		>
-			Скачать PDF отчет
-		</a>
+		<div style="display: flex; gap: 10px">
+			<a
+				href="{% url 'log-list' %}"
+				class="add-to-cart-btn btn-outline"
+				style="margin-left: 20px"
+			>
+				Просмотр логов
+			</a>
+			<a
+				href="{% url 'pdf-report' %}"
+				class="add-to-cart-btn"
+				style="margin-left: 20px"
+			>
+				Скачать PDF отчет
+			</a>
+		</div>
 	</div>
 	{% if is_manager %}
 	<div
@@ -757,226 +766,145 @@
 
 <script>
 
-	   {% if genre_stats %}
-	   const genreCtx = document.getElementById('genreChart');
-	   new Chart(genreCtx, {
-	       type: 'doughnut',
-	       data: {
-	           labels: [
-	               {% for stat in genre_stats %}
-	                   '{{ stat.name }}',
-	               {% endfor %}
-	           ],
-	           datasets: [{
-	               data: [
-	                   {% for stat in genre_stats %}
-	                       {{ stat.count }},
-	                   {% endfor %}
-	               ],
-	               backgroundColor: [
-	                   '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
-	               ]
-	           }]
-	       },
-	       options: {
-	           responsive: true,
-	           maintainAspectRatio: false,
-	           plugins: {
-	               legend: {
-	                   position: 'bottom'
-	               }
-	           }
-	       }
-	   });
-	   {% endif %}
+	{% if genre_stats %}
+	const genreCtx = document.getElementById('genreChart');
+	new Chart(genreCtx, {
+	    type: 'doughnut',
+	    data: {
+	        labels: [
+	            {% for stat in genre_stats %}
+	                '{{ stat.name }}',
+	            {% endfor %}
+	        ],
+	        datasets: [{
+	            data: [
+	                {% for stat in genre_stats %}
+	                    {{ stat.count }},
+	                {% endfor %}
+	            ],
+	            backgroundColor: [
+	                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
+	            ]
+	        }]
+	    },
+	    options: {
+	        responsive: true,
+	        maintainAspectRatio: false,
+	        plugins: {
+	            legend: {
+	                position: 'bottom'
+	            }
+	        }
+	    }
+	});
+	{% endif %}
 
 
-	   {% if popular_products %}
-	   const productCtx = document.getElementById('productChart');
-	   new Chart(productCtx, {
-	       type: 'bar',
-	       data: {
-	           labels: [
-	               {% for product in popular_products %}
-	                   '{{ product.product__product_name|truncatewords:3 }}',
-	               {% endfor %}
-	           ],
-	           datasets: [{
-	               label: 'Продано',
-	               data: [
-	                   {% for product in popular_products %}
-	                       {{ product.total_sold }},
-	                   {% endfor %}
-	               ],
-	               backgroundColor: '#4BC0C0'
-	           }]
-	       },
-	       options: {
-	           responsive: true,
-	           maintainAspectRatio: false,
-	           plugins: {
-	               legend: {
-	                   position: 'bottom'
-	               }
-	           }
-	       }
-	   });
-	   {% endif %}
+	{% if popular_products %}
+	const productCtx = document.getElementById('productChart');
+	new Chart(productCtx, {
+	    type: 'bar',
+	    data: {
+	        labels: [
+	            {% for product in popular_products %}
+	                '{{ product.product__product_name|truncatewords:3 }}',
+	            {% endfor %}
+	        ],
+	        datasets: [{
+	            label: 'Продано',
+	            data: [
+	                {% for product in popular_products %}
+	                    {{ product.total_sold }},
+	                {% endfor %}
+	            ],
+	            backgroundColor: '#4BC0C0'
+	        }]
+	    },
+	    options: {
+	        responsive: true,
+	        maintainAspectRatio: false,
+	        plugins: {
+	            legend: {
+	                position: 'bottom'
+	            }
+	        }
+	    }
+	});
+	{% endif %}
 
 
-	   document.addEventListener('DOMContentLoaded', function() {
-	       const statusSelects = document.querySelectorAll('.status-select');
-	       statusSelects.forEach(select => {
-	           select.addEventListener('change', function() {
-	               const orderId = this.dataset.orderId;
-	               const newStatus = this.value;
+	document.addEventListener('DOMContentLoaded', function() {
+	    const statusSelects = document.querySelectorAll('.status-select');
+	    statusSelects.forEach(select => {
+	        select.addEventListener('change', function() {
+	            const orderId = this.dataset.orderId;
+	            const newStatus = this.value;
 
 
-	               fetch(`/api/v1/orders/${orderId}/`, {
-	                   method: 'PATCH',
-	                   headers: {
-	                       'Content-Type': 'application/json',
-	                       'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-	                   },
-	                   body: JSON.stringify({ status: newStatus }),
-	                   credentials: 'include'
-	               })
-	               .then(response => {
-	                   if (response.ok) {
+	            fetch(`/api/v1/orders/${orderId}/`, {
+	                method: 'PATCH',
+	                headers: {
+	                    'Content-Type': 'application/json',
+	                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+	                },
+	                body: JSON.stringify({ status: newStatus }),
+	                credentials: 'include'
+	            })
+	            .then(response => {
+	                if (response.ok) {
 
-	                       const statusText = this.options[this.selectedIndex].text;
-	                       showNotification(`Статус заказа #${orderId} изменен на "${statusText}"`, 'success');
-	                   } else {
-	                       throw new Error('Ошибка обновления статуса');
-	                   }
-	               })
-	               .catch(error => {
-	                   console.error('Ошибка:', error);
-	                   showNotification('Ошибка при изменении статуса заказа', 'error');
+	                    const statusText = this.options[this.selectedIndex].text;
+	                    showNotification(`Статус заказа #${orderId} изменен на "${statusText}"`, 'success');
+	                } else {
+	                    throw new Error('Ошибка обновления статуса');
+	                }
+	            })
+	            .catch(error => {
+	                console.error('Ошибка:', error);
+	                showNotification('Ошибка при изменении статуса заказа', 'error');
 
-	                   this.value = this.dataset.previousValue;
-	               });
-	           });
-
-
-	           select.dataset.previousValue = select.value;
-	       });
-	   });
-
-	   function showNotification(message, type = 'info') {
-
-	       const notification = document.createElement('div');
-	       notification.style.cssText = `
-	           position: fixed;
-	           top: 20px;
-	           right: 20px;
-	           padding: 12px 20px;
-	           border-radius: 8px;
-	           color: white;
-	           font-weight: bold;
-	           z-index: 1000;
-	           animation: slideIn 0.3s ease-out;
-	       `;
-
-	       if (type === 'success') {
-	           notification.style.backgroundColor = '#28a745';
-	       } else if (type === 'error') {
-	           notification.style.backgroundColor = '#dc3545';
-	       } else {
-	           notification.style.backgroundColor = '#17a2b8';
-	       }
-
-	       notification.textContent = message;
-	       document.body.appendChild(notification);
+	                this.value = this.dataset.previousValue;
+	            });
+	        });
 
 
-	       setTimeout(() => {
-	           notification.style.animation = 'slideOut 0.3s ease-in';
-	           setTimeout(() => {
-	               document.body.removeChild(notification);
-	           }, 300);
-	       }, 3000);
+	        select.dataset.previousValue = select.value;
+	    });
+	});
+
+	function showNotification(message, type = 'info') {
+
+	    const notification = document.createElement('div');
+	    notification.style.cssText = `
+	        position: fixed;
+	        top: 20px;
+	        right: 20px;
+	        padding: 12px 20px;
+	        border-radius: 8px;
+	        color: white;
+	        font-weight: bold;
+	        z-index: 1000;
+	        animation: slideIn 0.3s ease-out;
+	    `;
+
+	    if (type === 'success') {
+	        notification.style.backgroundColor = '#28a745';
+	    } else if (type === 'error') {
+	        notification.style.backgroundColor = '#dc3545';
+	    } else {
+	        notification.style.backgroundColor = '#17a2b8';
+	    }
+
+	    notification.textContent = message;
+	    document.body.appendChild(notification);
+
+
+	    setTimeout(() => {
+	        notification.style.animation = 'slideOut 0.3s ease-in';
+	        setTimeout(() => {
+	            document.body.removeChild(notification);
+	        }, 300);
+	    }, 3000);
 	}
 </script>
-
-<style>
-	/* Адаптивные стили для страницы управления БД */
-	@media (max-width: 968px) {
-		.db-page {
-			margin-top: 90px !important;
-			padding: 0 20px !important;
-		}
-
-		.db-header {
-			flex-direction: column !important;
-			align-items: flex-start !important;
-		}
-
-		.db-actions {
-			width: 100%;
-		}
-
-		.db-actions .add-to-cart-btn {
-			flex: 1;
-			text-align: center;
-		}
-	}
-
-	@media (max-width: 768px) {
-		.db-page {
-			margin-top: 80px !important;
-			padding: 0 16px !important;
-		}
-
-		.product-title {
-			font-size: 1.5rem !important;
-		}
-
-		.db-actions {
-			flex-direction: column;
-			width: 100%;
-		}
-
-		.db-actions .add-to-cart-btn {
-			width: 100%;
-			margin: 0 !important;
-		}
-
-		.card {
-			padding: 16px !important;
-		}
-
-		.card h2 {
-			font-size: 1.2rem !important;
-		}
-
-		/* Адаптивность для статистических карточек */
-		.card[style*='grid-template-columns'] {
-			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-		}
-
-		/* Адаптивность для графиков */
-		.card[style*='grid-template-columns: 1fr 1fr'] {
-			grid-template-columns: 1fr !important;
-		}
-	}
-
-	@media (max-width: 480px) {
-		.db-page {
-			padding: 0 12px !important;
-		}
-
-		.product-title {
-			font-size: 1.3rem !important;
-		}
-
-		.card {
-			padding: 12px !important;
-		}
-
-		.card[style*='grid-template-columns'] {
-			grid-template-columns: 1fr !important;
-		}
-	}
-</style>
 {% endblock %}

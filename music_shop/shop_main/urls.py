@@ -57,4 +57,5 @@ urlpatterns = [
     path("coupons/<int:pk>/delete/", views.CouponDeleteView.as_view(), name="coupon-delete"),
     path("db/", views.DatabaseOverviewView.as_view(), name="db-index"),
     path("db/pdf-report/", views.GeneratePDFReportView.as_view(), name="pdf-report"),
+    path("logs/", views.LogEntryListView.as_view(), name="log-list"),
 ]
