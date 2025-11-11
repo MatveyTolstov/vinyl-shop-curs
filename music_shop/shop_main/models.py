@@ -140,7 +140,7 @@ class Coupon(models.Model):
 
 class LogEntry(models.Model):
     """Модель для хранения логов действий пользователей"""
-    
+
     ACTION_CHOICES = [
         ("login", "Вход в систему"),
         ("logout", "Выход из системы"),
@@ -156,31 +156,31 @@ class LogEntry(models.Model):
     ]
 
     user = models.ForeignKey(
-        User, 
-        on_delete=models.SET_NULL, 
-        null=True, 
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
         blank=True,
-        related_name="log_entries"
+        related_name="log_entries",
     )
     action = models.CharField(max_length=50, choices=ACTION_CHOICES)
     description = models.TextField(blank=True)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     user_agent = models.CharField(max_length=255, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     order = models.ForeignKey(
-        Order, 
-        on_delete=models.SET_NULL, 
-        null=True, 
+        Order,
+        on_delete=models.SET_NULL,
+        null=True,
         blank=True,
-        related_name="log_entries"
+        related_name="log_entries",
     )
     product = models.ForeignKey(
-        Product, 
-        on_delete=models.SET_NULL, 
-        null=True, 
+        Product,
+        on_delete=models.SET_NULL,
+        null=True,
         blank=True,
-        related_name="log_entries"
+        related_name="log_entries",
     )
 
     class Meta:
@@ -200,8 +200,11 @@ class LogEntry(models.Model):
 
 class Favorite(models.Model):
     """Избранные товары пользователя"""
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorites")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="favorited_by")
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="favorited_by"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
